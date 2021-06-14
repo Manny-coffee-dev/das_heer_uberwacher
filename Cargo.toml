@@ -9,7 +9,5 @@ edition = "2018"
 [dependencies]
 serde_json = "1.0.45"
 serde = { version = "1.0", features = ["derive"] }
-
-[dependencies.petgraph]
-version = "0.5.1"
-features = ["serde-1"]
+postgres = "0.19.0"
+dotenv = "0.15.0"
