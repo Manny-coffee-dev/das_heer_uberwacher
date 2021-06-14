@@ -1,7 +1,15 @@
 [package]
-name = "project-name"
+name = "das-heer-uberwacher"
 version = "0.0.0"
 authors = ["author <author-email>"]
 edition = "2018"
 
+
+
 [dependencies]
+serde_json = "1.0.45"
+serde = { version = "1.0", features = ["derive"] }
+
+[dependencies.petgraph]
+version = "0.5.1"
+features = ["serde-1"]
