@@ -58,8 +58,15 @@ impl fmt::Display for UnitType {
   }
 }
 
+#[derive(Serialize, Debug, Clone)]
+pub struct Person {
+  id: i32,
+  name: &'static str,
+  age: i32,
+  rank: i32
+}
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Unit {
   id: i32,
   parent_id: std::option::Option<i32>,
@@ -68,6 +75,8 @@ pub struct Unit {
   kills: i32,
   losses: i32,
   leader: &'static str,
+  sub_units: Vec<Unit>,
+  personnel: Vec<Person>
 }
 
 
@@ -82,7 +91,7 @@ fn main() {
 
   let mut formation = Vec::<Unit>::new();
 
-  let company_hq = Unit{
+  let mut company_hq = Unit{
     id: 0,
     parent_id: None,
     name: "First Company",
@@ -90,38 +99,41 @@ fn main() {
     kills: 0,
     losses: 0,
     leader: "Hauptmann Mann",
+    sub_units: Vec::<Unit>::new(),
+    personnel: Vec::<Person>::new(),
   };
 
-  formation.push(company_hq);
+  
 
   let platoon_1 = Unit{
     id: 1,
-    parent_id: Some(company_hq.id),
+    parent_id: Some(0),
     name: "First Platoon",
     unit_type: UnitType::Infantry,
     kills: 0,
     losses: 0,
     leader: "Leutnant Keller",
+    sub_units: Vec::<Unit>::new(),
+    personnel: Vec::<Person>::new(),
   };
 
-  formation.push(platoon_1);
+  
 
   let platoon_2 = Unit{
     id: 2,
-    parent_id: Some(company_hq.id),
+    parent_id: Some(0),
     name: "Second Platoon",
     unit_type: UnitType::Infantry,
     kills: 0,
     losses: 0,
     leader: "Leutnant Gaunt",
+    sub_units: Vec::<Unit>::new(),
+    personnel: Vec::<Person>::new(),
   };
 
-  formation.push(platoon_2);
-
-  for unit in &formation {
-    let saved_unit = save_unit(&unit);
-    println!("{:?}", saved_unit);
-  }
+  company_hq.sub_units.push(platoon_1);
+  company_hq.sub_units.push(platoon_2);
+  formation.push(company_hq);
 
   println!("{:?}", serde_json::to_string(&formation).unwrap());
 
