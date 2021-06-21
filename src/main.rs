@@ -1,113 +1,11 @@
-use serde::{Serialize, Deserialize};
-use dotenv::dotenv;
-use postgres::{Client, Error, NoTls};
-use std::{env, fmt};
+mod structs;
+use crate::structs::rank::{Rank};
+use crate::structs::person::{Person, PersonState};
+use crate::structs::unit::{Unit, UnitType};
 
-pub fn establish_connection() -> Result<(), Error> {
-    dotenv().ok();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let mut client = Client::connect(&database_url, NoTls)?;
-
-    // Create units table
-    client.batch_execute(
-        "
-        CREATE TABLE IF NOT EXISTS units (
-            id          INTEGER PRIMARY KEY,
-           parent_id   INTEGER,
-            name        VARCHAR NOT NULL,
-            unit_type   VARCHAR NOT NULL,
-            kills       INTEGER NOT NULL,
-            losses      INTEGER NOT NULL,
-            leader_id   INTEGER NOT NULL);
-    ",
-    )?;
-
-    // Create personnel table
-    client.batch_execute(
-      "
-      CREATE TABLE IF NOT EXISTS personnel (
-          id          INTEGER PRIMARY KEY,
-          first_name  VARCHAR NOT NULL,
-          last_name   VARCHAR NOT NULL,
-          age         INTEGER NOT NULL,
-          nationality VARCHAR NOT NULL,
-          rank        INTEGER NOT NULL,
-          officer     BOOLEAN NOT NULL,
-          state       VARCHAR NOT NULL);
-    ",
-    )?;
-
-    // Create ranks table
-    client.batch_execute(
-      "
-      CREATE TABLE IF NOT EXISTS ranks (
-          id          SERIAL PRIMARY KEY,
-          level       INTEGER NOT NULL,
-          name        VARCHAR NOT NULL,
-          title       VARCHAR NOT NULL,
-          officer     BOOLEAN NOT NULL,
-          nationality VARCHAR NOT NULL);
-    ",
-    )?;
-  Ok(())
-}
-
-pub fn save_unit(unit: &Unit) -> Result<(), Error> {
-  dotenv().ok();
-  let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-  let mut client = Client::connect(&database_url, NoTls)?;
-  client.execute(
-      "INSERT INTO units (id, parent_id, name, unit_type, kills, losses, leader_id) VALUES ($1, $2, $3, $4, $5, $6, $7);",
-      &[
-        &unit.id, 
-        &unit.parent_id,
-        &unit.name,
-        &unit.unit_type.to_string(),
-        &unit.kills,
-        &unit.losses,
-        &unit.leader_id,
-      ],
-  )?;
-  Ok(())
-}
-
-pub fn save_person(person: &Person) -> Result<(), Error> {
-  dotenv().ok();
-  let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-  let mut client = Client::connect(&database_url, NoTls)?;
-  client.execute(
-      "INSERT INTO personnel (id, first_name, last_name, age, nationality, rank, officer, state) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);",
-      &[
-        &person.id, 
-        &person.first_name,
-        &person.last_name,
-        &person.age,
-        &person.nationality,
-        &person.rank,
-        &person.officer,
-        &person.state.to_string(),
-      ],
-  )?;
-  Ok(())
-}
-
-pub fn save_rank(rank: &Rank) -> Result<(), Error> {
-  dotenv().ok();
-  let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-  let mut client = Client::connect(&database_url, NoTls)?;
-  client.execute(
-      "INSERT INTO ranks (id, level, name, title, officer, nationality) VALUES ($1, $2, $3, $4, $5, $6);",
-      &[
-        &rank.id, 
-        &rank.level,
-        &rank.name,
-        &rank.title,
-        &rank.officer,
-        &rank.nationality,
-      ],
-  )?;
-  Ok(())
-}
+mod utils;
+use utils::database;
+use crate::database::{establish_connection, save_unit, save_rank, save_person};
 
 pub fn store_formation(formation: Vec<Unit>){
   for unit in &formation{
@@ -125,70 +23,6 @@ pub fn store_sub_units(unit: &Unit) {
       store_sub_units(&sub_sub_unit);
     }
   }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
-pub enum PersonState {
-  Ready,
-  MIA,
-  KIA,
-  WIA,
-  POW,
-}
-
-impl fmt::Display for PersonState {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-      write!(f, "{:?}", self)
-  }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
-pub enum UnitType {
-  Infantry,
-  _Armoured,
-  _Recon,
-  _Support,
-}
-
-impl fmt::Display for UnitType {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-      write!(f, "{:?}", self)
-  }
-}
-
-#[derive(Serialize, Debug, Clone, Copy)]
-pub struct Rank {
-  id: i32,
-  level: i32,
-  name: &'static str,
-  title: &'static str,
-  officer: bool,
-  nationality: &'static str,
-}
-
-#[derive(Serialize, Debug, Clone)]
-pub struct Person {
-  id: i32,
-  first_name: &'static str,
-  last_name: &'static str,
-  age: i32,
-  nationality: &'static str,
-  rank: i32,
-  officer: bool,
-  state: PersonState,
-}
-
-#[derive(Serialize, Debug, Clone)]
-pub struct Unit {
-  id: i32,
-  parent_id: std::option::Option<i32>,
-  name: &'static str,
-  unit_type: UnitType,
-  kills: i32,
-  losses: i32,
-  leader_id: i32,
-  sub_units: Vec<Unit>,
-  personnel: Vec<Person>,
 }
 
 
@@ -228,7 +62,7 @@ fn main() {
     let _ = save_rank(&rank);
   }
 
-
+  // Create formation
   let mut formation = Vec::<Unit>::new();
 
   let huaptmann_mann = Person{
@@ -310,5 +144,6 @@ fn main() {
   company_hq.sub_units.push(platoon_2);
   formation.push(company_hq);
 
+  // Save formation
   store_formation(formation);
 }
