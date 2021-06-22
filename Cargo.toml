@@ -1,13 +1,13 @@
 [package]
-name = "das-heer-uberwacher"
+name = "das_heer_uberwatcher"
 version = "0.0.0"
 authors = ["author <author-email>"]
 edition = "2018"
 
 
-
 [dependencies]
 serde_json = "1.0.45"
 serde = { version = "1.0", features = ["derive"] }
-postgres = "0.19.0"
 dotenv = "0.15.0"
+diesel = { version = "1.4.4", features = ["postgres"] }
+rand = "0.8.4"

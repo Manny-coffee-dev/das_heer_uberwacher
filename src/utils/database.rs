@@ -4,6 +4,7 @@ use std::{env};
 
 use crate::Rank;
 use crate::Person;
+use crate::PersonState;
 use crate::Unit;
 
 pub fn establish_connection() -> Result<(), Error> {
@@ -110,4 +111,32 @@ pub fn save_rank(rank: &Rank) -> Result<(), Error> {
       ],
   )?;
   Ok(())
+}
+
+pub fn get_leader(unit: &Unit) -> Result<Person, Error> {
+  dotenv().ok();
+  let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+  let mut client = Client::connect(&database_url, NoTls)?;
+  let leader_id = unit.leader_id;
+  let response = client.query("SELECT * FROM personnel WHERE id = $1", &[&leader_id])?;
+  let row = &response[0];
+    let id: i32 = row.get("id");
+    let first_name: String = row.get("first_name");
+    let last_name: String = row.get("last_name");
+    let age: i32 = row.get("age");
+    let nationality: String = row.get("nationality");
+    let rank: i32 = row.get("rank");
+    let officer: bool = row.get("officer");
+    println!("leader_id: {}", first_name);
+    let person = Person{
+      id,
+      first_name: &first_name,
+      last_name: &last_name,
+      age,
+      nationality: &nationality,
+      rank,
+      officer,
+      state: PersonState::Ready,
+    };
+  Ok(person)
 }
