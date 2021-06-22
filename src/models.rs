@@ -3,6 +3,13 @@ use serde::{Serialize};
 use super::schema::{personnel, units, ranks};
 
 #[derive(Serialize, Debug, Clone, Queryable)]
+pub struct  Name {
+  pub id: i32,
+  pub first_name: String,
+  pub last_name: String,
+}
+
+#[derive(Serialize, Debug, Clone, Queryable)]
 pub struct Person {
   pub id: i32,
   pub unit_id: std::option::Option<i32>,

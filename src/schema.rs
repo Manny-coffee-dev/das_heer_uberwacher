@@ -1,4 +1,12 @@
 table! {
+    names (id) {
+        id -> Int4,
+        first_name -> Varchar,
+        last_name -> Varchar,
+    }
+}
+
+table! {
     personnel (id) {
         id -> Int4,
         unit_id -> Nullable<Int4>,
@@ -34,6 +42,7 @@ table! {
 }
 
 allow_tables_to_appear_in_same_query!(
+    names,
     personnel,
     ranks,
     units,

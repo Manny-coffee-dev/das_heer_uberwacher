@@ -3,7 +3,7 @@ extern crate diesel;
 
 use self::das_heer_uberwatcher::*;
 
-
+// TODO: Convert to sql in up.sql
 fn main() {
     let connection = establish_connection();
     // German Enlisted
