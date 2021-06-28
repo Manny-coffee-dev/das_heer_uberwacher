@@ -1,4 +1,4 @@
-# Das heer Überwatcher
+# Das heer Überwacher
 
 ![Rust](https://github.com/Manny-coffee-dev/das_heer_uberwacher/workflows/Rust/badge.svg?branch=main)
 

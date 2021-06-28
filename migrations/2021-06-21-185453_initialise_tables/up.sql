@@ -27,6 +27,26 @@ CREATE TABLE IF NOT EXISTS ranks (
         nationality VARCHAR NOT NULL
 );
 
+INSERT INTO public.ranks VALUES (20, 1, 'Soldat', 'S.', 'DE');
+INSERT INTO public.ranks VALUES (21, 2, 'Gefreiter', 'Gefr.', 'DE');
+INSERT INTO public.ranks VALUES (22, 3, 'Hauptgefreiter', 'HtpGefr.', 'DE');
+INSERT INTO public.ranks VALUES (23, 4, 'Stabsgefreiter', 'StGefr.', 'DE');
+INSERT INTO public.ranks VALUES (24, 5, 'Unteroffizier', 'U.', 'DE');
+INSERT INTO public.ranks VALUES (25, 6, 'Feldwebel', 'Fw.', 'DE');
+INSERT INTO public.ranks VALUES (26, 7, 'Hauptfeldwebel', 'HtpFw.', 'DE');
+INSERT INTO public.ranks VALUES (27, 8, 'Stabsfeldwebel', 'StFw.', 'DE');
+INSERT INTO public.ranks VALUES (28, 9, 'Oberstabsfeldwebel', 'OStFw.', 'DE');
+INSERT INTO public.ranks VALUES (29, 10, 'Fahrich', 'Fr.', 'DE');
+INSERT INTO public.ranks VALUES (30, 11, 'Leutnant', 'Lt.', 'DE');
+INSERT INTO public.ranks VALUES (31, 12, 'Hauptmann', 'Htpm.', 'DE');
+INSERT INTO public.ranks VALUES (32, 13, 'Major', 'Maj.', 'DE');
+INSERT INTO public.ranks VALUES (33, 14, 'Oberstleutnant', 'OTL.', 'DE');
+INSERT INTO public.ranks VALUES (34, 15, 'Oberst', 'O.', 'DE');
+INSERT INTO public.ranks VALUES (35, 16, 'Brigadegeneral', 'BrigGen.', 'DE');
+INSERT INTO public.ranks VALUES (36, 17, 'Generalmajor', 'GenMaj.', 'DE');
+INSERT INTO public.ranks VALUES (37, 18, 'Generalleutnant', 'GenLt.', 'DE');
+INSERT INTO public.ranks VALUES (38, 19, 'General', 'Gen.', 'DE');
+
 CREATE TABLE IF NOT EXISTS names (
         id          SERIAL PRIMARY KEY,
         first_name  VARCHAR NOT NULL,
